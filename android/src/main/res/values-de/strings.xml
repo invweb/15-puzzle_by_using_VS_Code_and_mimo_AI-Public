@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">15 Puzzle</string>
+    <string name="title_puzzle">Puzzle</string>
+    <string name="subtitle">Klassisches Schiebepuzzle</string>
+    <string name="btn_play">Spielen</string>
+    <string name="btn_settings">Einstellungen</string>
+    <string name="btn_quit">Beenden</string>
+    <string name="btn_back">Zurück</string>
+    <string name="btn_menu">Menü</string>
+    <string name="btn_reset">Zurücksetzen</string>
+    <string name="settings_title">Einstellungen</string>
+    <string name="setting_grid_size">Rastergröße</string>
+    <string name="setting_shuffle_steps">Mischtritte</string>
+    <string name="setting_animation">Animationstempo</string>
+    <string name="speed_fast">Schnell</string>
+    <string name="speed_normal">Normal</string>
+    <string name="speed_slow">Langsam</string>
+    <string name="status_playing">Spiel läuft</string>
+    <string name="status_solved">GELÖST!</string>
+    <string name="moves_format">Züge: %d</string>
+    <string name="setting_language">Sprache</string>
+    <string name="lang_en">English</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_de">Deutsch</string>
+</resources>
