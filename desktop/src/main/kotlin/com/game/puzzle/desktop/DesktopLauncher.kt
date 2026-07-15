@@ -96,6 +96,12 @@ class GameFrame : JFrame("15 Puzzle") {
         contentPane.background = BG_COLOR
         contentPane.layout = null
 
+        val icon16 = createIcon(16)
+        val icon32 = createIcon(32)
+        val icon64 = createIcon(64)
+        val icon128 = createIcon(128)
+        iconImages = listOf(icon16, icon32, icon64, icon128)
+
         listOf(splashPanel, menuPanel, settingsPanel, puzzlePanel).forEach {
             it.setBounds(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
             it.isVisible = false
@@ -115,7 +121,38 @@ class GameFrame : JFrame("15 Puzzle") {
         isVisible = true
         isFocusable = true
         requestFocusInWindow()
+
         splashPanel.startAnimation()
+    }
+
+    private fun createIcon(size: Int): java.awt.Image {
+        val img = java.awt.image.BufferedImage(size, size, java.awt.image.BufferedImage.TYPE_INT_ARGB)
+        val g = img.createGraphics()
+        g.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON)
+        g.setRenderingHint(java.awt.RenderingHints.KEY_RENDERING, java.awt.RenderingHints.VALUE_RENDER_QUALITY)
+
+        g.color = BG_COLOR
+        g.fillRoundRect(0, 0, size, size, size / 8, size / 8)
+
+        val ps = size * 24 / 128; val pg = size * 4 / 128
+        val px = (size - (ps * 4 + pg * 3)) / 2
+        val py = (size - (ps * 4 + pg * 3)) / 2
+        for (i in 0 until 8) {
+            g.color = TILE_COLORS[i]
+            g.fillRoundRect(px + (i % 4) * (ps + pg), py + (i / 4) * (ps + pg), ps, ps, 3, 3)
+            if (size >= 32) {
+                g.color = Color.WHITE
+                g.font = Font("SansSerif", Font.BOLD, (size / 10).coerceAtLeast(8))
+                val fm = g.fontMetrics
+                val num = "${i + 1}"
+                val tx = px + (i % 4) * (ps + pg) + (ps - fm.stringWidth(num)) / 2
+                val ty = py + (i / 4) * (ps + pg) + (ps + fm.ascent - fm.descent) / 2
+                g.drawString(num, tx, ty)
+            }
+        }
+
+        g.dispose()
+        return img
     }
 
     fun showMenu() {
