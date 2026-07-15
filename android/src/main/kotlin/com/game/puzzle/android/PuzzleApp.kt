@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,12 +44,36 @@ data class AppSettings(
     val gridSize get() = listOf(3, 4, 5)[gridIndex]
     val shuffleSteps get() = listOf(20, 50, 100)[shuffleIndex]
     val animSpeed get() = listOf(100L, 200L, 400L)[speedIndex]
+
+    companion object {
+        fun load(context: android.content.Context): AppSettings {
+            val prefs = context.getSharedPreferences(AndroidLauncher.PREFS_NAME, android.content.Context.MODE_PRIVATE)
+            val langCode = prefs.getString(AndroidLauncher.KEY_LANGUAGE, "en") ?: "en"
+            val langIndex = when (langCode) { "ru" -> 1; "de" -> 2; else -> 0 }
+            return AppSettings(
+                gridIndex = prefs.getInt("grid_index", 1),
+                shuffleIndex = prefs.getInt("shuffle_index", 1),
+                speedIndex = prefs.getInt("speed_index", 1),
+                langIndex = langIndex
+            )
+        }
+    }
+
+    fun save(context: android.content.Context) {
+        val prefs = context.getSharedPreferences(AndroidLauncher.PREFS_NAME, android.content.Context.MODE_PRIVATE)
+        prefs.edit()
+            .putInt("grid_index", gridIndex)
+            .putInt("shuffle_index", shuffleIndex)
+            .putInt("speed_index", speedIndex)
+            .apply()
+    }
 }
 
 @Composable
-fun PuzzleApp() {
+fun PuzzleApp(onLanguageChange: (String) -> Unit = {}) {
+    val context = LocalContext.current
     var currentScreen by remember { mutableStateOf(Screen.SPLASH) }
-    var settings by remember { mutableStateOf(AppSettings()) }
+    var settings by remember { mutableStateOf(AppSettings.load(context)) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -65,7 +90,11 @@ fun PuzzleApp() {
             )
             Screen.SETTINGS -> SettingsScreen(
                 settings = settings,
-                onSettingsChange = { settings = it },
+                onSettingsChange = { newSettings ->
+                    settings = newSettings
+                    newSettings.save(context)
+                },
+                onLanguageChange = onLanguageChange,
                 onBack = { currentScreen = Screen.MENU }
             )
             Screen.GAME -> GameScreen(
@@ -295,7 +324,7 @@ fun GameButton(text: String, color: Color, onClick: () -> Unit) {
 }
 
 @Composable
-fun SettingsScreen(settings: AppSettings, onSettingsChange: (AppSettings) -> Unit, onBack: () -> Unit) {
+fun SettingsScreen(settings: AppSettings, onSettingsChange: (AppSettings) -> Unit, onLanguageChange: (String) -> Unit, onBack: () -> Unit) {
     val gridOptions = listOf(3, 4, 5)
     val shuffleOptions = listOf(20, 50, 100)
     val speedLabels = listOf(
@@ -324,7 +353,11 @@ fun SettingsScreen(settings: AppSettings, onSettingsChange: (AppSettings) -> Uni
 
         Text(stringResource(R.string.setting_language), fontSize = 20.sp, color = Color(0xFFB4B4C8))
         Spacer(modifier = Modifier.height(8.dp))
-        OptionRow(langLabels, settings.langIndex) { onSettingsChange(settings.copy(langIndex = it)) }
+        OptionRow(langLabels, settings.langIndex) { index ->
+            onSettingsChange(settings.copy(langIndex = index))
+            val langCodes = arrayOf("en", "ru", "de")
+            onLanguageChange(langCodes[index])
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
 

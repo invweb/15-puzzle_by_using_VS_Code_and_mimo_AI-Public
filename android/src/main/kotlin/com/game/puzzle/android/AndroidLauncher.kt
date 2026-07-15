@@ -35,7 +35,7 @@ class AndroidLauncher : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
-                PuzzleApp()
+                PuzzleApp(onLanguageChange = { langCode -> setLanguage(langCode) })
             }
         }
     }
