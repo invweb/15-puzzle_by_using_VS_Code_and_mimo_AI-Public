@@ -94,7 +94,7 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "15 Puzzle",
         state = androidx.compose.ui.window.WindowState(
-            size = androidx.compose.ui.unit.DpSize(500.dp, 600.dp)
+            size = androidx.compose.ui.unit.DpSize(500.dp, 700.dp)
         ),
         resizable = false
     ) {
