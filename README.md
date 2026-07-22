@@ -74,4 +74,4 @@ Settings (grid size, shuffle steps, animation speed, language) are shared betwee
 
 ## License
 
-MIT
+MIT-0
